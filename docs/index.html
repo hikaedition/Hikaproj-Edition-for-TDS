@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS 18 風ホーム画面</title>
+
+    <!-- GridStack.jsのCSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10.1.2/dist/gridstack.min.css" />
+    
+    <!-- ここからCSSスタイル -->
+    <style>
+        body {
+            /* 背景画像をセット */
+            background-image: url('https://source.unsplash.com/random/1080x1920?nature,sky');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* グリッド全体 */
+        .grid-stack {
+            background: rgba(0, 0, 0, 0.1); /* グリッド範囲を分かりやすくするため */
+        }
+
+        /* 各アイコンのスタイル */
+        .grid-stack-item-content {
+            background: rgba(255, 255, 255, 0.2); /* アイコンの背景 */
+            border-radius: 22%; /* iOS風の角丸 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            overflow: hidden;
+            backdrop-filter: blur(10px); /* すりガラス効果 */
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .grid-stack-item-content img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+            /* アイコンの色合いを変更する部分 */
+            filter: grayscale(1) sepia(1) hue-rotate(180deg) saturate(5) brightness(1.2);
+        }
+        
+        /* コントロールパネル */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 色合い変更のためのコントロール -->
+    <div class="controls">
+        <span>アイコンの色:</span>
+        <input type="color" id="icon-tint-color" value="#007aff">
+    </div>
+
+    <!-- GridStackのコンテナ -->
+    <div class="grid-stack">
+        <!-- ここにアプリアイコンを配置 -->
+        <!-- gs-w, gs-hで幅と高さを指定 -->
+        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/FF5733/FFFFFF?Text=App1" alt="App1"><span>App 1</span></div></div>
+        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/33FF57/FFFFFF?Text=App2" alt="App2"><span>App 2</span></div></div>
+        <div class="grid-stack-item" gs-w="2" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/200x100/3357FF/FFFFFF?Text=Widget" alt="Widget"><span>Widget</span></div></div>
+        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/FFC300/FFFFFF?Text=App3" alt="App3"><span>App 3</span></div></div>
+    </div>
+
+    <!-- GridStack.jsの本体 -->
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@10.1.2/dist/gridstack-all.js"></script>
+    
+    <!-- ここからJavaScript -->
+    <script>
+        // GridStackを初期化
+        const grid = GridStack.init({
+            // オプション
+            float: true, // アイテムを浮動させ、どこにでも配置可能にする (iOS 18のキー機能)
+            column: 4,   // グリッドの列数
+            cellHeight: '80px', // セルの高さ
+            margin: 10,  // アイテム間のマージン
+        });
+
+        // アイコンの色合いを変更する機能
+        const colorPicker = document.getElementById('icon-tint-color');
+        
+        // HSLに変換するヘルパー関数
+        function hexToHsl(hex) {
+            let r = 0, g = 0, b = 0;
+            if (hex.length == 4) {
+                r = "0x" + hex[1] + hex[1];
+                g = "0x" + hex[2] + hex[2];
+                b = "0x" + hex[3] + hex[3];
+            } else if (hex.length == 7) {
+                r = "0x" + hex[1] + hex[2];
+                g = "0x" + hex[3] + hex[4];
+                b = "0x" + hex[5] + hex[6];
+            }
+            r /= 255; g /= 255; b /= 255;
+            let cmin = Math.min(r,g,b), cmax = Math.max(r,g,b), delta = cmax - cmin, h = 0, s = 0, l = 0;
+            if (delta == 0) h = 0;
+            else if (cmax == r) h = ((g - b) / delta) % 6;
+            else if (cmax == g) h = (b - r) / delta + 2;
+            else h = (r - g) / delta + 4;
+            h = Math.round(h * 60);
+            if (h < 0) h += 360;
+            l = (cmax + cmin) / 2;
+            s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+            s = +(s * 100).toFixed(1);
+            l = +(l * 100).toFixed(1);
+            return { h, s, l };
+        }
+
+        function updateIconTint() {
+            const color = colorPicker.value;
+            const hsl = hexToHsl(color);
+            
+            // CSSのfilterプロパティを動的に変更
+            // 1. grayscale(1)でモノクロにする
+            // 2. sepia(1)で色を乗せやすくする
+            // 3. hue-rotate()で色相を合わせる
+            // 4. saturate()とbrightness()で鮮やかさと明るさを調整
+            const filterValue = `grayscale(1) sepia(1) hue-rotate(${hsl.h - 50}deg) saturate(6) brightness(1)`;
+            
+            document.querySelectorAll('.grid-stack-item-content img').forEach(img => {
+                img.style.filter = filterValue;
+            });
+        }
+        
+        colorPicker.addEventListener('input', updateIconTint);
+        
+        // 初期読み込み時にも適用
+        updateIconTint();
+
+    </script>
+</body>
+</html>
