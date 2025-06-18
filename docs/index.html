@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS 18 風ホーム画面</title>
+    <title>ホーム画面</title>
 
     <!-- GridStack.jsのCSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10.1.2/dist/gridstack.min.css" />
@@ -12,7 +12,7 @@
     <style>
         body {
             /* 背景画像をセット */
-            background-image: url('https://source.unsplash.com/random/1080x1920?nature,sky');
+            /*background-image: url('https://source.unsplash.com/random/1080x1920?nature,sky');*/
             background-size: cover;
             background-position: center;
             margin: 0;
@@ -22,6 +22,7 @@
         /* グリッド全体 */
         .grid-stack {
             background: rgba(0, 0, 0, 0.1); /* グリッド範囲を分かりやすくするため */
+            min-height: 400px; /* グリッドが見えるように高さを追加 */
         }
 
         /* 各アイコンのスタイル */
@@ -75,12 +76,30 @@
 
     <!-- GridStackのコンテナ -->
     <div class="grid-stack">
-        <!-- ここにアプリアイコンを配置 -->
-        <!-- gs-w, gs-hで幅と高さを指定 -->
-        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/FF5733/FFFFFF?Text=App1" alt="App1"><span>App 1</span></div></div>
-        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/33FF57/FFFFFF?Text=App2" alt="App2"><span>App 2</span></div></div>
-        <div class="grid-stack-item" gs-w="2" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/200x100/3357FF/FFFFFF?Text=Widget" alt="Widget"><span>Widget</span></div></div>
-        <div class="grid-stack-item" gs-w="1" gs-h="1"><div class="grid-stack-item-content"><img src="https://via.placeholder.com/100/FFC300/FFFFFF?Text=App3" alt="App3"><span>App 3</span></div></div>
+        <div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-w="1" data-gs-h="1">
+            <div class="grid-stack-item-content">
+                <img src="https://fonts.gstatic.com/s/i/materialicons/home/v12/24px.svg" alt="ホーム">
+                <span>ホーム</span>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="1" data-gs-y="0" data-gs-w="1" data-gs-h="1">
+            <div class="grid-stack-item-content">
+                <img src="https://fonts.gstatic.com/s/i/materialicons/settings/v12/24px.svg" alt="設定">
+                <span>設定</span>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="2" data-gs-y="0" data-gs-w="1" data-gs-h="1">
+            <div class="grid-stack-item-content">
+                <img src="https://fonts.gstatic.com/s/i/materialicons/person/v12/24px.svg" alt="プロフィール">
+                <span>プロフィール</span>
+            </div>
+        </div>
+        <div class="grid-stack-item" data-gs-x="3" data-gs-y="0" data-gs-w="1" data-gs-h="1">
+            <div class="grid-stack-item-content">
+                <img src="https://fonts.gstatic.com/s/i/materialicons/mail/v12/24px.svg" alt="メール">
+                <span>メール</span>
+            </div>
+        </div>
     </div>
 
     <!-- GridStack.jsの本体 -->
